@@ -1,0 +1,58 @@
+:root {
+    --BackgroundColor: rgb(20 30 48);
+    --BaseColor: rgb(0 71 91);
+    --TextColor: rgb(200 200 200);
+    --TextColor2: rgb(207 216 236 / 60%);
+    --TextColor3: rgb(134 163 235);
+    --LinkColor: rgb(3 218 198);
+    --BtnColor: rgb(66 72 101);
+    --BtnShadowColor: rgb(207 216 236 / 30%);
+    --ErrorColor: rgb(207 102 121);
+    --SuccessColor: rgb(76 175 80);
+    --AlertColor: #939000;
+    --IconSize: 1.5rem;
+}
+
+@font-face {
+    font-family: 'vazir';
+    src: url('/fonts/vazir.ttf') format('truetype');
+}
+* {
+    margin: 0;
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+input, button, textarea, select {
+    font: inherit;
+}
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+p {
+    text-wrap: pretty;
+}   
+
+h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+}
+#root, #__next {
+    isolation: isolate;
+}
+body {
+    font-family: 'vazir';
+    text-align: justify;
+    font-size: 1rem;
+    background: var(--BackgroundColor);
+    color: var(--TextColor);
+    /*direction: rtl;*/
+    margin: 0;
+    background: #37510d;
+    background-image: url(/soccerAssets/chaman.png);
+}

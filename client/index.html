@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fa">
+<head>
+    <!--اصلاح-->
+    <script src="/lib/sData.js"></script>
+    <script type="module" src="/soccerAssets/game.main.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>soccer</title>
+    <script>
+        if (typeof publicToken === 'undefined') {
+            publicDeviceId = '';
+            publicToken = '';
+            publicApiBaseUrl = 'http://localhost:5054';
+            publicHubBaseUrl = 'http://localhost:5074';
+        }
+    </script>
+    <link rel="stylesheet" href="/css/main.css" cache="inPage" />
+    <link rel="stylesheet" href="/css/font.css" cache="inPage" />
+    <style>
+    </style>
+
+</head>
+<body>
+    <div id="main">
+        <div id="top"></div>
+        <div id="gameParent">
+        </div>
+    </div>
+    <div id="startPage">
+    </div>
+    <div id="load">
+        <div class="lds-hourglass"></div>
+    </div>
+</body>
+</html>

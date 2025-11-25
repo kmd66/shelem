@@ -10,7 +10,7 @@
     "build-js-only": "vite build --config vite-js-only.config.js",
     "copy-assets": "cp -r img/ dist/img/ && cp -r sound/ dist/sound/ && cp index.html dist/ && cp css/ dist/css/",
     "preview": "vite preview",
-    "watch": "vite build --watch"
+    "watch": "vite build --watch --minify false"
   },
   "devDependencies": {
     "vite": "^7.1.7"
@@ -18,6 +18,7 @@
   "dependencies": {
     "@microsoft/signalr": "^9.0.6",
     "@microsoft/signalr-protocol-msgpack": "^9.0.6",
-    "phaser": "^3.90.0"
+    "deck-of-cards": "^0.1.8",
+    "gsap": "^3.13.0"
   }
 }

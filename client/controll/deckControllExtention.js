@@ -43,8 +43,61 @@ export class DeckControllExtention {
         }
 
     }
+    createFanCarts(list, my) {
+        this.elClassName = 'f';
+        let cards = [];
+        let y = p.h - p.remToPx(1);
+        if (!my)
+            y = -p.remToPx(6);
+        const x = p.wC - p.remToPx(2.5) ;
+        list.forEach((u, i) => {
+            const id = this.generateId();
+            const elModel = my ? u : {};
+            let div = this.getEl(elModel, id);
+            div.style.top = y + 'px';
+            div.style.left = (x ) + 'px';
+            div.style.zIndex = 10;
+            cards.push({
+                id: id,
+                el: div,
+                suit: elModel.suit,
+                rank: elModel.rank
+            });
+        });
 
-    createCarts(list, my) {
+        const dz = cards.length > 12? 7: 9;
+        const df = cards.length * dz; var df2 = df / 3;
+        cards = sortCards(cards);
+        cards.forEach((card, index) => {
+            const rot = index / (cards.length - 1) * df - df2;
+            if (my)
+                card.el.style.transform = `
+                translate(${Math.cos(deg2rad(rot - 90)) * 60}px, ${Math.sin(deg2rad(rot - 90)) * 60}px) 
+                rotate(${rot}deg)`;
+            else
+                card.el.style.transform = `
+                translate(${Math.cos(deg2rad(rot + 90)) * 60}px, ${Math.sin(deg2rad(rot + 90)) * 60}px) 
+                rotate(${rot + 180}deg)`;
+        });
+        return cards;
+
+
+
+        function deg2rad(degrees) {
+            return degrees * Math.PI / 180;
+        }
+        function sortCards(cards) {
+            return cards.sort((a, b) => {
+                if (a.suit !== b.suit) {
+                    return String(a.suit).localeCompare(String(b.suit));
+                }
+                return a.rank - b.rank;
+            });
+        }
+    }
+
+    createGroundCarts(list, my) {
+        this.elClassName = 'g';
         let cards = [];
         list.forEach((u, index) => {
             if (u.count == 0) return;
@@ -73,7 +126,7 @@ export class DeckControllExtention {
         let x = p.remToPx(7);
         if (index > 1) x = x * -1;
         else if (index > 0) x = 0;
-        x = p.wC - p.remToPx(2.5) + x - xM;
+        x = p.wC - p.remToPx(2.14) + x - xM;
         div.style.top = y + 'px';
         div.style.left = x + 'px';
         //div.style.transform = 'scale(0.9)';
@@ -82,7 +135,7 @@ export class DeckControllExtention {
     getEl(model, id) {
         const div = document.createElement('div');
         div.className = this.getClassName(model.suit, model.rank);
-        div.id = `I${id}`;
+        div.id = `${id}`;
         div.innerHTML = '<div class="back"></div>';
         if (model.suit != undefined && model.suit > -1) {
             div.innerHTML = '<div class="face"></div>';
@@ -91,10 +144,10 @@ export class DeckControllExtention {
     }
 
     getClassName(suit, rank) {
+        let c = 'card ' + this.elClassName;
         if (suit == undefined || suit < 0)
-            return 'card g';
+            return c;
 
-        let c = 'card g';
         switch (suit) {
             case 0: c += ' spades'; break;
             case 1: c += ' hearts'; break;

@@ -112,6 +112,25 @@ class DeckControll {
         p.rivaGround.forEach((c) => container.appendChild(c.el));
 
     }
+
+    async addCardInMain(item) {
+        this.extention.elClassName = 'g';
+        const id = this.extention.generateId();
+        const div = this.extention.getEl(item, id);
+        const containerMain = document.getElementById('containerMain');
+        const rect = {
+            leftMin: -p.remToPx(2),
+            leftMax: p.remToPx(3),
+        }
+        const randomLeft = Math.random() * (rect.leftMax - rect.leftMin) + rect.leftMin;
+        const randomTop = Math.random() * (rect.leftMax - rect.leftMin) + rect.leftMin;
+        const randomRot = Math.random() * (180 -0) + 0;
+
+        div.style.top = p.hC + 'px';
+        div.style.left = p.wC - p.remToPx(2.14) + 'px';
+        div.style.transform = ` translate(${randomLeft}px, ${randomTop}px) rotate(${randomRot}deg)`;
+        containerMain.appendChild(div)
+    }
     
 }
 

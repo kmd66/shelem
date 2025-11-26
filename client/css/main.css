@@ -87,3 +87,11 @@ body {
     height: 100%;
     overflow: hidden;
 }
+#containerMain {
+    position: fixed;
+    top: calc(50% - 5rem);
+    left: calc(50% - 30%);
+    background: transparent;
+    width: 60%;
+    height: 10rem;
+}

@@ -71,6 +71,24 @@ export class DeckEvents {
 
         this.isDragging = false;
         this.dragId = null;
+
+        const pos = this.getRelativePos(e);
+        this.isContainerMain(pos)
+
+    }
+    isContainerMain(pos) {
+        const containerMain = document.getElementById('containerMain');
+        const rect = containerMain.getBoundingClientRect();
+
+        // بررسی آیا موقعیت داخل containerMain هست
+        if (pos.x >= rect.left && pos.x <= rect.right &&
+            pos.y >= rect.top && pos.y <= rect.bottom) {
+            console.log('رها شدن در داخل containerMain');
+            // عملیات مربوط به containerMain
+        } else {
+            console.log('رها شدن در خارج از containerMain');
+            // عملیات دیگر
+        }
     }
 }
 

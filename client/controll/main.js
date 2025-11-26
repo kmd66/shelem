@@ -6,6 +6,7 @@ import { Propertys as p } from './public';
 document.addEventListener('DOMContentLoaded', () => {
     p.init();
     d1()
+    d2()
 });
 async function d1() {
 
@@ -33,4 +34,21 @@ async function d1() {
     deckControll.startGround(gList)
 
 }
+
+function d2() {
+    const wqe = document.getElementById('wqe');
+
+    wqe.addEventListener('click', (e) => {
+        const iwqe = document.getElementById('iwqe');
+        const card = p.myFan[iwqe.value];
+        const list = [];
+        p.myFan.forEach((c) => {
+            if (c.id != card.id)
+            list.push({ suit: c.suit, rank: c.rank })
+        });
+        deckControll.startFan(list)
+        deckControll.addCardInMain({ suit: card.suit, rank: card.rank })
+    });
+}
+
 

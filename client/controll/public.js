@@ -1,5 +1,10 @@
 class PropertyService {
     constructor() {
+        this.startDeck = null;
+        this.myFan = null;
+        this.myGround = null;
+        this.rivaFan = null;
+        this.rivaGround = null;
     }
     static instance;
     static Instance() {
@@ -25,6 +30,14 @@ class PropertyService {
         this.wC = container.offsetWidth / 2;
         this.h = container.offsetHeight;
         this.hC = container.offsetHeight / 2;
+    }
+
+    getCardById(id) {
+        this.isDragging = false;
+
+        const target = this.myFan.find(x => x.id == id);
+        if (target) return target;
+        return this.myGround.find(x => x.id == id);
     }
 }
 

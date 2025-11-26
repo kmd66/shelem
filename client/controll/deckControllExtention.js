@@ -1,7 +1,9 @@
-
 import { Propertys as p } from './public';
+import { DeckEvents } from './deckEvents';
+
 export class DeckControllExtention {
     constructor() {
+        this.events = new DeckEvents();
     }
 
     removeAllDesk(deck, isEl) {
@@ -22,7 +24,6 @@ export class DeckControllExtention {
             deck = null;
         }
     }
-
     removeAllCards(deck, cards, isEl) {
 
         if (isEl) {
@@ -43,41 +44,51 @@ export class DeckControllExtention {
         }
 
     }
+
     createFanCarts(list, my) {
         this.elClassName = 'f';
         let cards = [];
-        let y = p.h - p.remToPx(1);
+        let y = p.h + p.remToPx(5);
         if (!my)
-            y = -p.remToPx(6);
+            y = -p.remToPx(4);
         const x = p.wC - p.remToPx(2.5) ;
         list.forEach((u, i) => {
             const id = this.generateId();
             const elModel = my ? u : {};
             let div = this.getEl(elModel, id);
             div.style.top = y + 'px';
-            div.style.left = (x ) + 'px';
+            div.style.left = x + 'px';
             div.style.zIndex = 10;
             cards.push({
                 id: id,
                 el: div,
                 suit: elModel.suit,
-                rank: elModel.rank
+                rank: elModel.rank,
+                loc: { x: x, y: y },
+                my: my,
+                type: 'Fan'
             });
+
+            this.events.init(div, my);
         });
 
-        const dz = cards.length > 12? 7: 9;
-        const df = cards.length * dz; var df2 = df / 3;
+        const length = cards.length > 1 ? cards.length : 2;
+        const dz = length > 12 ? 5 : 7; // کاهش dz برای زاویه کمتر
+        const distance =110; // افزایش فاصله
+        const df = length * dz;
+        var df2 = df / 3;
+
         cards = sortCards(cards);
         cards.forEach((card, index) => {
-            const rot = index / (cards.length - 1) * df - df2;
+            const rot = index / (length - 1) * df - df2;
             if (my)
                 card.el.style.transform = `
-                translate(${Math.cos(deg2rad(rot - 90)) * 60}px, ${Math.sin(deg2rad(rot - 90)) * 60}px) 
-                rotate(${rot}deg)`;
+        translate(${Math.cos(deg2rad(rot - 90)) * distance}px, ${Math.sin(deg2rad(rot - 90)) * distance}px) 
+        rotate(${rot -20}deg)`;
             else
                 card.el.style.transform = `
-                translate(${Math.cos(deg2rad(rot + 90)) * 60}px, ${Math.sin(deg2rad(rot + 90)) * 60}px) 
-                rotate(${rot + 180}deg)`;
+        translate(${Math.cos(deg2rad(rot + 90)) * distance}px, ${Math.sin(deg2rad(rot + 90)) * distance}px) 
+        rotate(${rot + 160}deg)`;
         });
         return cards;
 
@@ -107,29 +118,34 @@ export class DeckControllExtention {
                 let div;
                 const elModel = isLastInnerIteration ? u : {};
                 div = this.getEl(elModel, id);
-                this.setGroundStyle(div, index, i, my);
+                const loc = this.setGroundStyle(index, i, my);
+                div.style.top = loc.y + 'px';
+                div.style.left = loc.x + 'px';
                 cards.push({
                     id: id,
                     el: div,
                     suit: elModel.suit,
-                    rank: elModel.rank
+                    rank: elModel.rank,
+                    loc: loc,
+                    my: my,
+                    type:'Ground'
                 });
+
+                this.events.init(div, my);
             }
         });
         return cards;
     }
 
-    setGroundStyle(div, index, xM, my) {
-        let y = p.h - p.remToPx(9.5);
+    setGroundStyle(index, xM, my) {
+        let y = p.h - p.remToPx(5.5);
         if (!my)
-            y = p.remToPx(3.5);
+            y = p.remToPx(7.5);
         let x = p.remToPx(7);
         if (index > 1) x = x * -1;
         else if (index > 0) x = 0;
         x = p.wC - p.remToPx(2.14) + x - xM;
-        div.style.top = y + 'px';
-        div.style.left = x + 'px';
-        //div.style.transform = 'scale(0.9)';
+        return { x: x, y: y };
     }
 
     getEl(model, id) {

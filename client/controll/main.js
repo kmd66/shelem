@@ -23,12 +23,12 @@ async function d1() {
     const t = shuffled.slice(0, 12);
 
     const gList = {
-        u1: [{ count: 1, suit: 0, rank: 5 }, { count: 1, suit: 3, rank: 2 }, { count: 3, suit: 1, rank: 5}],
-        //u1: [{ count: 4, suit: -1, rank: -1 }, { count: 3, suit: -1, rank: -1 }, { count: 1, suit: -1, rank: -1 }],
+         //u1: [{ count: 4, suit: 0, rank: 5 }, { count: 1, suit: 3, rank: 2 }, { count: 3, suit: 1, rank: 5}],
+       u1: [{ count: 4, suit: -1, rank: -1 }, { count: 3, suit: -1, rank: -1 }, { count: 1, suit: -1, rank: -1 }],
         u2: [{ count: 4, suit: -1, rank: -1 }, { count: 3, suit: -1, rank: -1 }, { count: 1, suit: -1, rank: -1 }],
     }
 
-    await deckControll.start()
+    //await deckControll.start()
     deckControll.startFan(t)
     deckControll.startGround(gList)
 

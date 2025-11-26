@@ -49,7 +49,11 @@ body {
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
     box-shadow: 0 1px 1px rgba(0,0,0,0.15);
     cursor: default;
+    border: 1px solid #7f7f7f;
 }
+    .card.g, .card.f {
+        position: fixed;
+    }
     .card.g {
         width: 4.28rem !important;
         height: 6rem !important;

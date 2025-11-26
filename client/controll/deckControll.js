@@ -5,12 +5,8 @@ import { Propertys as p } from './public';
 class DeckControll {
     constructor() {
         this.container = document.getElementById('container');
-        this.startDeck = null;
-        this.myFan = null;
-        this.myGround= null;
-        this.rivaFan = null;
-        this.rivaGround = null;
         this.extention = new DeckControllExtention();
+        this.addevent()
     }
 
     static instance;
@@ -21,23 +17,33 @@ class DeckControll {
         return DeckControll.instance;
     }
 
+    addevent() {
+
+        const container = document.getElementById('container');
+
+        container.addEventListener('mousemove', (e) => this.extention.events.onDrag(e));
+        container.addEventListener('touchmove', (e) => this.extention.events.onDrag(e));
+        container.addEventListener('mouseup', (e) => this.extention.events.endDrag(e));
+        container.addEventListener('touchend', (e) => this.extention.events.endDrag(e));
+    }
+
     async start() {
-        this.extention.removeAllDesk(this.startDeck);
-        this.extention.removeAllDesk(this.myFan, true);
-        this.extention.removeAllDesk(this.rivaFan, true);
-        this.extention.removeAllDesk(this.myGround, true);
-        this.extention.removeAllDesk(this.rivaGround, true);
+        this.extention.removeAllDesk(p.startDeck);
+        this.extention.removeAllDesk(p.myFan, true);
+        this.extention.removeAllDesk(p.rivaFan, true);
+        this.extention.removeAllDesk(p.myGround, true);
+        this.extention.removeAllDesk(p.rivaGround, true);
 
         const container = document.getElementById('container');
         container.innerHTML = '';
-        this.startDeck = Deck();
-        await shuffle(this.startDeck);
+        p.startDeck = Deck();
+        await shuffle(p.startDeck);
 
         const tl = gsap.timeline();
         const tl2 = gsap.timeline();
 
-        const cardsToSpread1 = this.startDeck.cards.slice(0, 24);
-        const cardsToSpread2 = this.startDeck.cards.slice(24, 48);
+        const cardsToSpread1 = p.startDeck.cards.slice(0, 24);
+        const cardsToSpread2 = p.startDeck.cards.slice(24, 48);
 
         cardsToSpread1.forEach((card, index) => {
             const y = index % 2 === 0 ? p.hC : p.hC*-1;
@@ -64,8 +70,8 @@ class DeckControll {
         });
         await tl2.then();
 
-        this.extention.removeAllCards(this.startDeck, cardsToSpread1);
-        this.extention.removeAllCards(this.startDeck, cardsToSpread2);
+        this.extention.removeAllCards(p.startDeck, cardsToSpread1);
+        this.extention.removeAllCards(p.startDeck, cardsToSpread2);
         async function shuffle(d) {
             d.mount(container);
             await new Promise(resolve => setTimeout(resolve, 700));
@@ -79,18 +85,18 @@ class DeckControll {
     }
 
     async startFan(list) {
-        this.extention.removeAllDesk(this.myFan, true);
-        this.extention.removeAllDesk(this.rivaFan, true);
+        this.extention.removeAllDesk(p.myFan, true);
+        this.extention.removeAllDesk(p.rivaFan, true);
 
         const container = document.getElementById('container');
 
-        this.myFan = this.extention.createFanCarts(list, true);
-        this.rivaFan = this.extention.createFanCarts(list, false);
+        p.myFan = this.extention.createFanCarts(list, true);
+        p.rivaFan = this.extention.createFanCarts(list, false);
 
         //this.myFan.forEach((c) => document.getElementById('containerMyFan').appendChild(c.el));
         //this.rivaFan.forEach((c) => document.getElementById('containerRivaFan').appendChild(c.el));
-        this.myFan.forEach((c) => container.appendChild(c.el));
-        this.rivaFan.forEach((c) => container.appendChild(c.el));
+        p.myFan.forEach((c) => container.appendChild(c.el));
+        p.rivaFan.forEach((c) => container.appendChild(c.el));
     }
 
     async startGround(list) {
@@ -99,11 +105,11 @@ class DeckControll {
 
         const container = document.getElementById('container');
 
-        this.myGround = this.extention.createGroundCarts(list.u1, true);
-        this.rivaGround = this.extention.createGroundCarts(list.u2, false);
+        p.myGround = this.extention.createGroundCarts(list.u1, true);
+        p.rivaGround = this.extention.createGroundCarts(list.u2, false);
 
-        this.myGround.forEach((c) => container.appendChild(c.el));
-        this.rivaGround.forEach((c) => container.appendChild(c.el));
+        p.myGround.forEach((c) => container.appendChild(c.el));
+        p.rivaGround.forEach((c) => container.appendChild(c.el));
 
     }
     

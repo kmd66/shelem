@@ -2,6 +2,7 @@ import { Deck } from './deck';
 //import { gsap } from "gsap";
 import { deckControll } from './deckControll';
 import { Propertys as p } from './public';
+import { startPage } from './startPage';
 
 document.addEventListener('DOMContentLoaded', () => {
     p.init();
@@ -29,7 +30,8 @@ async function d1() {
         u2: [{ count: 4, suit: -1, rank: -1 }, { count: 3, suit: -1, rank: -1 }, { count: 1, suit: -1, rank: -1 }],
     }
 
-    //await deckControll.start()
+    startPage.init()
+    await deckControll.start()
     deckControll.startFan(t)
     deckControll.startGround(gList)
 
@@ -39,8 +41,9 @@ function d2() {
     const wqe = document.getElementById('wqe');
 
     wqe.addEventListener('click', (e) => {
-        const iwqe = document.getElementById('iwqe');
-        const card = p.myFan[iwqe.value];
+        //const iwqe = document.getElementById('iwqe');
+        //const card = p.myFan[iwqe.value];
+        const card = p.myFan[0];
         const list = [];
         p.myFan.forEach((c) => {
             if (c.id != card.id)

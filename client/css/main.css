@@ -95,3 +95,92 @@ body {
     width: 60%;
     height: 10rem;
 }
+#startPage {
+    width: 100%;
+    height: 100vh;
+    background: #37510d;
+    background-image: url(../shelemAssets/bg.png);
+    background-position: center;
+    background-size: cover;
+    z-index: 101;
+    position: fixed;
+    display:none;
+}
+    #startPage .around {
+        width: 100%;
+        height: 80%;
+        margin: 10% 0;
+    }
+.startPageText {
+    width: 40%;
+    padding: 5px;
+    text-align:center
+}
+.startPageProgressBar {
+    width: 80%;
+    background: #ff00de;
+    position: fixed;
+    bottom: 1rem;
+    margin: auto;
+    height: 20px;
+    left: 10%;
+}
+    .startPageProgressBar div {
+        height: 20px;
+        background: #00e5ff;
+    }
+    .startPageProgressBar span {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-size: 10px;
+        margin: 3px;
+    }
+.flex, .flexC {
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    display: flex;
+}
+.around {
+    justify-content: space-around !important;
+}
+.flexC {
+    flex-direction: column;
+}
+.imgC {
+    width: 110px;
+    height: 110px;
+    padding: 10px;
+    background-image: url(/shelemAssets/imgC.png);
+}
+.imgC img{
+    border-radius: 50%;
+    border: 3px solid #976f3b;
+}
+    
+.btn {
+    display: inline-block;
+    border-radius: 12px;
+    box-shadow: var(--BtnShadowColor) 0px 9px 20px -10px;
+    box-sizing: border-box;
+    color: var(--TextColor);
+    margin: 2px 0;
+    padding: 8px 18px;
+    user-select: none;
+    border: 0;
+    background-color: var(--BtnColor);
+    height: 50px;
+    width: 200px;
+}
+.btn-Greenlight {
+    background-image: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
+    border: 3px solid #976f3b;
+}
+.textCenter {
+    text-align: center;
+}
+.btnCancel {
+    border: 3px solid #976f3b;
+}

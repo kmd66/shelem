@@ -76,7 +76,7 @@ export class DeckControllExtention {
         const dz = length > 12 ? 5 : 7; // کاهش dz برای زاویه کمتر
         const distance =110; // افزایش فاصله
         const df = length * dz;
-        var df2 = df / 3;
+        var df2 = df / 2.5;
 
         cards = sortCards(cards);
         cards.forEach((card, index) => {
@@ -84,11 +84,11 @@ export class DeckControllExtention {
             if (my)
                 card.el.style.transform = `
         translate(${Math.cos(deg2rad(rot - 90)) * distance}px, ${Math.sin(deg2rad(rot - 90)) * distance}px) 
-        rotate(${rot -20}deg)`;
+        rotate(${rot}deg)`;
             else
                 card.el.style.transform = `
         translate(${Math.cos(deg2rad(rot + 90)) * distance}px, ${Math.sin(deg2rad(rot + 90)) * distance}px) 
-        rotate(${rot + 160}deg)`;
+        rotate(${rot}deg)`;
         });
         return cards;
 

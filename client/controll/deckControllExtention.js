@@ -73,8 +73,8 @@ export class DeckControllExtention {
         });
 
         const length = cards.length > 1 ? cards.length : 2;
-        const dz = length > 12 ? 5 : 7; // کاهش dz برای زاویه کمتر
-        const distance =110; // افزایش فاصله
+        const dz = length > 12 ? 6 : length > 8 ? 8 : length > 5 ? 10 : cards.length > 1 ? 14 : 1;
+        const distance = 110; // افزایش فاصله
         const df = length * dz;
         var df2 = df / 2.5;
 

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     p.init();
     d1()
     d2()
+    document.getElementById('load').style.display = 'none';
 });
 async function d1() {
 
@@ -22,7 +23,7 @@ async function d1() {
         }
     }
     const shuffled = [...allCards].sort(() => Math.random() - 0.5);
-    const t = shuffled.slice(0, 12);
+    const t = shuffled.slice(0, 16);
 
     const gList = {
          //u1: [{ count: 4, suit: 0, rank: 5 }, { count: 1, suit: 3, rank: 2 }, { count: 3, suit: 1, rank: 5}],
@@ -30,8 +31,8 @@ async function d1() {
         u2: [{ count: 4, suit: -1, rank: -1 }, { count: 3, suit: -1, rank: -1 }, { count: 1, suit: -1, rank: -1 }],
     }
 
-    startPage.init()
     await deckControll.start()
+    startPage.init()
     deckControll.startFan(t)
     deckControll.startGround(gList)
 

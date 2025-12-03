@@ -238,7 +238,7 @@ body {
     width: 3.5rem;
     height: 3.5rem;
     border: .2rem solid transparent;
-    border-radius: 5px;
+    border-radius: 12px;
     margin: 0 7px;
     overflow: hidden;
 }
@@ -260,7 +260,23 @@ body {
     margin: auto;
     margin: 5px;
 }
+.iconBtn{
+    padding: 5px;
+    margin: 5px;
+}
 .userInfo {align-items:center}
 .chatBox {
     margin: 0 7px;
+}
+#hokm {
+    z-index: 110;
+    position: fixed;
+    font-size: 2rem;
+    line-height: 2rem;
+    color: #ffbb00;
+    width: 4rem;
+    background: var(--BaseColor);
+    text-align: center;
+    height: 2rem;
+    left: calc(50% - 2rem);
 }

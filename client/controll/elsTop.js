@@ -3,12 +3,14 @@ export class ElsTop {
     addBar() {
         const _userTemp = this.userTemp();
         const _chatTemp = this.chatTemp();
+        const _infoTemp = this.infoTemp();
         const _heder = document.getElementById('heder');
         const _foter = document.getElementById('foter');
 
         _heder.appendChild(_userTemp.rivaUser);
         _heder.appendChild(_chatTemp);
         _foter.appendChild(_userTemp.user);
+        _foter.appendChild(_infoTemp);
 
         const interval = setInterval(() => {
             let sdf56s1 = heder.querySelector('.chatBox');
@@ -37,11 +39,19 @@ export class ElsTop {
         const div = document.createElement('div');
         div.className = 'chatBox flex';
         div.innerHTML = `
-            <div class="iconMsg iconMsg2"><i class="icon-messages-2"></i></div>
-            <div class="iconMsg iconMsg1"><i class="icon-message-text"></i></div>
-            <div class="iconSticker btnSticker"><i class="icon-smileys"></i></div>`;
+            <div class="iconBtn"><i class="icon-messages-2"></i></div>
+            <div class="iconBtn"><i class="icon-message-text"></i></div>
+            <div class="iconBtn"><i class="icon-smileys"></i></div>`;
         return div;
-        //icon-crown4
+    }
+
+    infoTemp() {
+        const div = document.createElement('div');
+        div.className = 'chatBox flex';
+        div.innerHTML = `
+            <div class="iconBtn"><i class="icon-information4"></i></div>
+            <div class="iconBtn"><i class="icon-card-edit"></i></div>`;
+        return div;
     }
 
     userTemp() {
@@ -81,5 +91,34 @@ export class ElsTop {
                 el.style.background = `conic-gradient(from 0deg, #03dac6 0deg ${deg}deg, black ${deg}deg 360deg) border-box`;
             } catch { }
         }
+    }
+
+
+    addHokm(hokm, my) {
+        const hokmDiv = document.getElementById('hokm');
+        if (hokm == undefined) {
+            hokmDiv.innerHTML = '';
+            hokmDiv.style.display = 'none';
+            return;
+        }
+
+        let h;
+        switch (hokm) {
+            case 0: h = '♠'; break;
+            case 1: h = '♥'; break;
+            case 2: h = '♣'; break;
+            case 3: h = '♦'; break;
+        }
+        if (my) {
+            hokmDiv.style.top = 'calc(100vh - 5.9rem)';
+            hokmDiv.style.borderRadius = '50% 50% 0 0';
+        }
+        else {
+            hokmDiv.style.top = '3.9rem';
+            hokmDiv.style.borderRadius = '0 0 50% 50%';
+        }
+
+        hokmDiv.innerHTML = h;
+        hokmDiv.style.display = 'block';
     }
 }

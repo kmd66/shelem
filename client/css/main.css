@@ -69,7 +69,9 @@ body {
 #heder, #foter {
     height: 4rem;
     background: var(--BaseColor);
-    z-index:100;
+    z-index: 100;
+    align-items: center;
+    font-size: .8rem;
 }
 #heder {
     top:0;
@@ -231,4 +233,34 @@ body {
 }
 .btnCancel {
     border: 3px solid #976f3b;
+}
+.sdf56s2 {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: .2rem solid transparent;
+    border-radius: 5px;
+    margin: 0 7px;
+    overflow: hidden;
+}
+    .sdf56s2 img {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+    .sdf56s4 i {
+        font-size: 0.7rem;
+        color: #fbff00;
+    }
+    .sdf56s4 span {
+        margin: 5px;
+    }
+.iconMsg1, .iconMsg2, .iconSticker {
+    padding: 5px;
+    background: var(--BtnColor);
+    border-radius: 7px;
+    margin: auto;
+    margin: 5px;
+}
+.userInfo {align-items:center}
+.chatBox {
+    margin: 0 7px;
 }

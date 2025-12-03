@@ -1,45 +1,15 @@
-import { gsap } from "gsap";
 import { Propertys as p } from './public';
 
-class StartPage {
+export class StartPage {
     constructor() {
     }
 
-    static instance;
-    static Instance() {
-        if (!StartPage.instance) {
-            StartPage.instance = new StartPage();
-        }
-        return StartPage.instance;
-    }
-
     init() {
-        p.start = false;
-        p.delay = {
-            Wait: 60,
-            Total: 60
-        }
-        const model = {
-            img1:'/test/p1',
-            img2: '/test/p2',
-
-            name1: 'name1',
-            fName1: 'fName1',
-            name2: 'name2',
-            fName2: 'fName2',
-
-            uName1: 'fName1',
-            uName2: 'fName2',
-
-            level1: '1',
-            level2: '1'
-        }
-
         const html = `<div class="flexC around">
-            ${img(model.img1, model.img2)}
+            ${img()}
             <div class="flex around">
-            ${userInfo(`${model.name1} ${model.fName1}`, model.uName1, model.level1)}
-            ${userInfo(`${model.name2} ${model.fName2}`, model.uName2, model.level2)}
+            ${userInfo(p.user.Info, p.user.Level)}
+            ${userInfo(p.rivaUser.Info, p.rivaUser.Level)}
             </div>
             <div class="textCenter">
                 <button class="btn btn-Greenlight">شروع</button>
@@ -69,24 +39,25 @@ class StartPage {
         function img(img1, img2) {
             return `<div class="flex around">
                 <div class="imgC">
-                    <img src="${img1}90.jpg" />
+                    <img src="${p.user.Info.Img}90.jpg" />
                 </div>
                 <div class="imgC">
-                    <img src="${img2}90.jpg" />
+                    <img src="${p.rivaUser.Info.Img}90.jpg" />
                 </div>
             </div>`;
         }
-        function userInfo(name, uName, level) {
+        function userInfo(info, level) {
             return `
                 <div class="startPageText">
-                    <div>${name}</div>
-                    <div>${uName}</div>
+                    <div>${info.FirstName} ${info.LastName}</div>
+                    <div>${info.UserName}</div>
                     <div>سطح: ${level}</div>
                 </div>
             `;
         }
+        const startPageHide = this.hide;
         function events() {
-            startButton.onclick = () => startPage.hide();
+            startButton.onclick = () => startPageHide();
             //startButton.onclick = () => socket.connection.invoke("Start", p.keys.roomId, p.keys.key);
         }
     }
@@ -144,7 +115,3 @@ class StartPage {
     }
 }
 
-if (!window.__startPage__) {
-    window.__startPage__ = StartPage.Instance();
-}
-export const startPage = window.__startPage__;

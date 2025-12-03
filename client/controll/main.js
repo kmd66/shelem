@@ -2,10 +2,11 @@ import { Deck } from './deck';
 //import { gsap } from "gsap";
 import { deckControll } from './deckControll';
 import { Propertys as p } from './public';
-import { startPage } from './startPage';
+import { els } from './els';
 
 document.addEventListener('DOMContentLoaded', () => {
     p.init();
+    setTestProperty()
     d1()
     d2()
     document.getElementById('load').style.display = 'none';
@@ -32,14 +33,15 @@ async function d1() {
     }
 
     await deckControll.start()
-    startPage.init()
+    els.startPage.init()
+    els.top.addBar();
     deckControll.startFan(t)
     deckControll.startGround(gList)
 
 }
 
 function d2() {
-    const wqe = document.getElementById('wqe');
+    const wqe = document.querySelector('.icon-smileys');
 
     wqe.addEventListener('click', (e) => {
         //const iwqe = document.getElementById('iwqe');
@@ -48,11 +50,37 @@ function d2() {
         const list = [];
         p.myFan.forEach((c) => {
             if (c.id != card.id)
-            list.push({ suit: c.suit, rank: c.rank })
+                list.push({ suit: c.suit, rank: c.rank })
         });
         deckControll.startFan(list)
         deckControll.addCardInMain({ suit: card.suit, rank: card.rank })
     });
+}
+function setTestProperty() {
+    p.start = false;
+    p.delay = {
+        Wait: 60,
+        Total: 60
+    }
+
+    p.user = {
+        Info: {
+            Img: '/test/p1',
+            UserName: 'uName1',
+            FirstName: 'name1',
+            LastName: 'lName1'
+        },
+        Level: 1
+    }
+    p.rivaUser = {
+        Info: {
+            Img: '/test/p2',
+            UserName: 'uName2',
+            FirstName: 'name2',
+            LastName: 'lName2'
+        },
+        Level: 1
+    }
 }
 
 

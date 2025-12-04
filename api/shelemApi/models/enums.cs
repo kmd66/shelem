@@ -8,3 +8,10 @@ public enum userInGameStatusType : byte
     ofline = 10,
     ekhraj = 11,
 }
+public enum GameState
+{
+    Reading, //خوندن کارت
+    Burning, //سوزندن کارت
+    Determination, //تعیین
+    Game//بازی
+}

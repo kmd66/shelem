@@ -34,7 +34,7 @@ public class RoomController(RoomService roomService) : ControllerBase
             }
             users[0].FirstUser = true;
 
-            var room = new Room { Id = roomId, Users = users };
+            var room = new Room(roomId, users);
 
             _roomService.AddRoom(room);
 
@@ -77,7 +77,7 @@ public class RoomController(RoomService roomService) : ControllerBase
 
         users[0].FirstUser = true;
 
-        var room = new Room { Id = roomId, Users = users };
+        var room = new Room(roomId, users);
 
         _roomService.AddRoom(room);
 

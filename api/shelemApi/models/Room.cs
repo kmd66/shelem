@@ -1,76 +1,119 @@
 ﻿using shelemApi.Helper;
+using System;
 
 namespace shelemApi.Models;
 
-public class Room : RoomProperty
+public class Room
 {
+    public RoomProperty Property ;
+    public RoomReading Reading;
+    public RoomBurning Burning;
+    public RoomGame Game;
+
+    public Room(Guid roomId, List<RoomUser> users)
+    {
+        Property = new(roomId, users);
+        Game = new(Property);
+        Burning = new(Property);
+        Reading = new(Property);
+    }
 
     public async Task Start()
     {
-        if (isStart)
+        if (Property.IsStart)
             return;
 
-        startToken = new CancellationTokenSource();
-        finishToken = new CancellationTokenSource();
-        initStrat = [];
-
+        Property.StartToken = new CancellationTokenSource();
+        Property.FinishToken = new CancellationTokenSource();
+        Property.InitStrat = [];
 
         try
         {
-            await Task.Delay(startWait * 1000, startToken.Token);
+            await Task.Delay(TimeSpan.FromSeconds(Property.StartWait), Property.StartToken.Token);
         }
         finally
         {
             try
             {
-                extensionStart();
+                _= extensionStart();
             }
             catch (Exception) { }
         }
     }
-    public async void SetStart(Guid key)
+    private async Task extensionStart()
     {
-    }
+        try
+        {
+            bool _start = Property.IsStart;
+        }
+        catch (Exception)
+        {
+            _ = Property.ReceiveCansel();
+            return;
+        }
 
-    private async void extensionStart()
-    {
-    }
-
-    private async void cancelRoom()
-    {
-    }
-
-
-    private async void main()
-    {
-    }
-
-    private void mainJob()
-    {
-    }
-
-    private bool checkOflineCount()
-    {
-
-        return true;
-    }
-
-    private async void completeSendData()
-    {
+        if (!Property.IsStart)
+        {
+            _ = Property.ReceiveCansel();
+        }
+        else
+        {
+            Property.Tourner = Property.Users.Find(x => x.FirstUser == true).Id;
+            await Task.Delay(500);
+            Property.StartGameAt = DateTime.Now;
+            await Property.ReceiveInit();
+            await Property.ReceivePhysicsStandard();
+            _ = Reading.Start();
+        }
     }
 
 
-    public override void FinishGame()
+    public void FinishGame()
     {
-    }
+        if (Property.IsStart && Property.IsFinish) return;
 
-    private long setWinner()
-    {
-        return 0;
+        bool isReload = false;
+        bool start = Property.IsStart;
+        if (Property.IsStart && Property.FirstOflineCount < 3 && Property.SecondOflineCount < 3)
+            isReload = true;
+        dispose();
+
+        var id1 =  Property.Users.First(x => x.FirstUser).Id;
+        var id2 = Property.Users.First(x => !x.FirstUser).Id;
+        long winner = 0;
+        if (Property.FirstOflineCount > 2 || Property.SecondOflineCount > 2)
+        {
+            winner = Property.FirstOflineCount > 2 ? id2 : id1;
+        }
+        //else if (firstUserGoal != secondUserGoal)
+        //{
+        //    winner = firstUserGoal > secondUserGoal ? id1 : id2;
+        //}
+        //else
+        //{
+        //    winner = _random.Next(0, 2) == 0 ? id1 : id2;
+        //}
+
+
+        var reloadModel = new FinishModelRequest(
+            key: AppStrings.ApiKey,
+            roomId: Property.Id,
+            start: start,
+            isReload: isReload,
+            winner: winner,
+            user1: new FinishUser(Property.Users[0].ConnectionId, Property.Users[0].Key, Property.Users[0].Id),
+            user2: new FinishUser(Property.Users[1].ConnectionId, Property.Users[1].Key, Property.Users[1].Id),
+            BaseUrl: Helper.AppStrings.MainUrl
+            );
+        //OnReload(reloadModel, goals);
     }
 
     private void dispose()
     {
+        Property.dispose();
+        Reading.dispose();
+        Burning.dispose();
+        Game.dispose();
     }
 
 }

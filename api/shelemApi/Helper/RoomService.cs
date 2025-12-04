@@ -16,10 +16,10 @@ public class RoomService(IHubContext<RoomHub> hubContext)
 
     public void AddRoom(Room room)
     {
-        if (_rooms.TryAdd(room.Id, room))
+        if (_rooms.TryAdd(room.Property.Id, room))
         {
             SubscribeToRoomEvents(room);
-            room.CreatedAt = DateTime.Now;
+            room.Property.CreatedAt = DateTime.Now;
             _ = room.Start();
         }
     }
@@ -46,7 +46,7 @@ public class RoomService(IHubContext<RoomHub> hubContext)
 
     #region Reload
 
-    public async void ReloadRoom(FinishModelRequest model, List<byte> goals)
+    public async Task ReloadRoom(FinishModelRequest model, List<byte> goals)
     {
         if (!model.start) return;
 
@@ -94,7 +94,7 @@ public class RoomService(IHubContext<RoomHub> hubContext)
                 if (userOther.accept)
                 {
                     _finishUser.TryRemove(finishId, out _);
-                    ReloadRequest2(userOther, users[userIndex]);
+                    _= ReloadRequest2(userOther, users[userIndex]);
                     return;
                 }
                 var updatedUser = users[userIndex] with { accept = true };
@@ -103,7 +103,7 @@ public class RoomService(IHubContext<RoomHub> hubContext)
             }
         }
     }
-    private async void ReloadRequest2(FinishUser user1, FinishUser user2)
+    private async Task ReloadRequest2(FinishUser user1, FinishUser user2)
     {
         var reloadModel = new FinishModelRequest(
             key: Helper.AppStrings.ApiKey,
@@ -139,7 +139,7 @@ public class RoomService(IHubContext<RoomHub> hubContext)
                 }
             };
 
-            var room = new Room { Id = resultReload.data.roomId, Users = users };
+            var room = new Room(resultReload.data.roomId, users);
             AddRoom(room);
             var url1 = new
             {
@@ -162,12 +162,21 @@ public class RoomService(IHubContext<RoomHub> hubContext)
     #endregion
 
     #region Notify
-
+    
     private void SubscribeToRoomEvents(Room room)
     {
+        room.Property.NotifyUserAsync += async (key, eventName, data) => await NotifyUserAsync(key, eventName, data);
+        room.Property.NotifyUsersAsync += async (keys, eventName, data) => await NotifyUsersAsync(keys, eventName, data);
+        room.Property.Remove += (roomId) => RemoveRoom(roomId);
+        room.Property.Reload += async (model, goals) => await ReloadRoom(model, goals);
+        room.Property.CreatedAt = DateTime.Now;
     }
     private void UnsubscribeFromRoomEvents(Room room)
     {
+        room.Property.NotifyUserAsync -= async (key, eventName, data) => await NotifyUserAsync(key, eventName, data);
+        room.Property.NotifyUsersAsync -= async (keys, eventName, data) => await NotifyUsersAsync(keys, eventName, data);
+        room.Property.Remove -= (roomId) => RemoveRoom(roomId);
+        room.Property.Reload -= async (model, goals) => await ReloadRoom(model, goals);
     }
 
 
@@ -206,7 +215,7 @@ public class RoomService(IHubContext<RoomHub> hubContext)
             return null;
         if (_rooms.TryGetValue(roomId, out Room room))
         {
-            return room.Users.FirstOrDefault(x =>
+            return room.Property.Users.FirstOrDefault(x =>
                 (key == Guid.Empty || x.Key == key) &&
                 (userId == 0 || x.Id == userId)
             );

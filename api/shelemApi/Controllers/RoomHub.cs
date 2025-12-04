@@ -46,7 +46,7 @@ public class RoomHub(RoomService roomService) : Hub
         var json = JsonSerializer.Serialize(roomInfo);
         await Clients.Caller.SendAsync("ReceiveRoomInfo", json);
         var room = _roomService.GetRoom(roomId);
-        if (room.isStart)
+        if (room.Property.IsStart)
         {
             await Task.Delay(1000);
             //await room.ReceivePhysicsStandard();
@@ -58,8 +58,8 @@ public class RoomHub(RoomService roomService) : Hub
         try
         {
             var room = _roomService.GetRoom(roomId);
-            if (room == null || room.isStart) return;
-            room.SetStart(key);
+            if (room == null || room.Property.IsStart) return;
+            //room.Property.SetStart(key);
         }
         catch (Exception)
         {
@@ -72,9 +72,9 @@ public class RoomHub(RoomService roomService) : Hub
         {
             var room = _roomService.GetRoom(roomId);
             if (room == null) return;
-            var user = room.Users.FirstOrDefault(x => x.Key == key);
+            var user = room.Property.Users.FirstOrDefault(x => x.Key == key);
             if (user == null) return;
-            await Clients.Clients(room.Users.Select(x => x.ConnectionId)).SendAsync("ReceiveAddSticker", new { id, userId = user.Id });
+            await Clients.Clients(room.Property.Users.Select(x => x.ConnectionId)).SendAsync("ReceiveAddSticker", new { id, userId = user.Id });
         }
         catch (Exception)
         {
@@ -87,9 +87,9 @@ public class RoomHub(RoomService roomService) : Hub
         {
             var room = _roomService.GetRoom(roomId);
             if (room == null) return;
-            var user = room.Users.FirstOrDefault(x => x.Key == key);
+            var user = room.Property.Users.FirstOrDefault(x => x.Key == key);
             if (user == null) return;
-            await Clients.Clients(room.Users.Select(x => x.ConnectionId)).SendAsync("ReceiveAddMessage", new { id, userId = user.Id });
+            await Clients.Clients(room.Property.Users.Select(x => x.ConnectionId)).SendAsync("ReceiveAddMessage", new { id, userId = user.Id });
         }
         catch (Exception)
         {

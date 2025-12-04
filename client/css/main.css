@@ -9,6 +9,7 @@
     --BtnShadowColor: rgb(207 216 236 / 30%);
     --ErrorColor: rgb(207 102 121);
     --SuccessColor: rgb(76 175 80);
+    --DialogShadowColor: rgb(0 0 0 / 14%);
     --AlertColor: #939000;
     --IconSize: 1.5rem;
 }
@@ -246,10 +247,11 @@ body {
         width: 3.5rem;
         height: 3.5rem;
     }
-    .sdf56s4 i {
-        font-size: 0.7rem;
-        color: #fbff00;
-    }
+.sdf56s4 i {
+    font-size: 0.7rem;
+    color: #fbff00;
+    line-height: 0.7rem;
+}
     .sdf56s4 span {
         margin: 5px;
     }
@@ -269,7 +271,7 @@ body {
     margin: 0 7px;
 }
 #hokm {
-    z-index: 110;
+    z-index: 100;
     position: fixed;
     font-size: 2rem;
     line-height: 2rem;
@@ -279,4 +281,72 @@ body {
     text-align: center;
     height: 2rem;
     left: calc(50% - 2rem);
+    display:none;
+}
+#selectPoint {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 100;
+    background: var(--DialogShadowColor);
+    display:none;
+}
+.selectPoint {
+    position: fixed;
+    width: 80%;
+    top: 1rem;
+    left: 10%;
+    background: #052935;
+    padding: 10px;
+}
+.selectPointBtn {
+    width: 30%;
+    margin: 0.5rem 1.5%;
+    text-align: center;
+    height: unset;
+    border-radius: unset;
+}
+    .selectPointBtn.s, .selectPointBtn.p {
+        width: 80%;
+        margin: 1rem 10%;
+    }
+    .selectPointBtn.s{
+        background: var(--ErrorColor);
+    }
+    .selectPointBtn.p {
+        background: var(--SuccessColor);
+    }
+    .selectPointBtn.d {
+        background: #5b5b5b;
+        color: #878787;
+    }
+.selectPoint .startPageProgressBar {
+    position: unset;
+}
+.selectPointBar {
+    background: #ff00de;
+    position: relative;
+    height: 10px;
+}
+    .selectPointBar div {
+        height: 10px;
+        background: #00e5ff;
+    }
+.sdf56s33 .sdf56s3b {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #03dac6;
+}
+.sps78-r-c2 {
+    background: #ff00de !important;
+}
+.sdf56s4{line-height:0.8rem}
+.totalTime{
+    position: absolute;
+    right: 0px;
+    padding: 2px 10px;
+    background: var(--BaseColor);
+    z-index: 100;
 }

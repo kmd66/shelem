@@ -1,5 +1,5 @@
 import { Propertys as p } from './public';
-export class ElsTop {
+export class ElTop {
     addBar() {
         const _userTemp = this.userTemp();
         const _chatTemp = this.chatTemp();
@@ -66,8 +66,13 @@ export class ElsTop {
                 <div class="sdf56s2 ${className}"><img src="${info.Img}90.jpg" /></div>
                 <div class="sdf56s4">
                     <div>${info.UserName}</div>
+                    <div class="sdf56s33">
+                        <div class="sdf56s3b sps78-r-c2"></div>
+                        <div class="sdf56s3b"></div>
+                        <div class="sdf56s3b"></div>
+                    </div>
                     <div><i class="icon-star4"></i><span>${level}</span></div>
-                </div>`;
+                </div> `;
             return div;
         }
     }
@@ -88,37 +93,9 @@ export class ElsTop {
             try {
                 const darsad = (model.i * 100) / model.shotTime;
                 const deg = (darsad / 100) * 360;
-                el.style.background = `conic-gradient(from 0deg, #03dac6 0deg ${deg}deg, black ${deg}deg 360deg) border-box`;
+                el.style.background = `conic-gradient(from 0deg, #03dac6 0deg ${deg}deg, var(--BaseColor) ${deg}deg 360deg) border-box`;
             } catch { }
         }
     }
-
-
-    addHokm(hokm, my) {
-        const hokmDiv = document.getElementById('hokm');
-        if (hokm == undefined) {
-            hokmDiv.innerHTML = '';
-            hokmDiv.style.display = 'none';
-            return;
-        }
-
-        let h;
-        switch (hokm) {
-            case 0: h = '♠'; break;
-            case 1: h = '♥'; break;
-            case 2: h = '♣'; break;
-            case 3: h = '♦'; break;
-        }
-        if (my) {
-            hokmDiv.style.top = 'calc(100vh - 5.9rem)';
-            hokmDiv.style.borderRadius = '50% 50% 0 0';
-        }
-        else {
-            hokmDiv.style.top = '3.9rem';
-            hokmDiv.style.borderRadius = '0 0 50% 50%';
-        }
-
-        hokmDiv.innerHTML = h;
-        hokmDiv.style.display = 'block';
-    }
+    
 }

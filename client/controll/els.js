@@ -1,10 +1,12 @@
 import { Propertys as p } from './public';
-import { ElsTop } from './elsTop';
+import { ElTop } from './elTop';
+import { ElHokm } from './elHokm';
 import { StartPage } from './startPage';
 
 class Els {
     constructor() {
-        this.top = new ElsTop();
+        this.top = new ElTop();
+        this.hokm = new ElHokm();
         this.startPage = new StartPage();
     }
 

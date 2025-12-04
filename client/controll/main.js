@@ -24,7 +24,7 @@ async function d1() {
         }
     }
     const shuffled = [...allCards].sort(() => Math.random() - 0.5);
-    const t = shuffled.slice(0, 16);
+    const t = shuffled.slice(0, 12);
 
     const gList = {
         //u1: [{ count: 4, suit: 0, rank: 5 }, { count: 1, suit: 3, rank: 2 }, { count: 3, suit: 1, rank: 5}],
@@ -35,7 +35,8 @@ async function d1() {
     //await deckControll.start()
     //els.startPage.init()
     els.top.addBar();
-    els.top.addHokm(0, true);
+    els.hokm.addHokm(0, true);
+    //els.hokm.addSelectPoint(120);
     deckControll.startFan(t)
     deckControll.startGround(gList)
 
@@ -55,6 +56,10 @@ function d2() {
         });
         deckControll.startFan(list)
         deckControll.addCardInMain({ suit: card.suit, rank: card.rank })
+    });
+    const d2 = document.querySelector('.icon-card-edit');
+    d2.addEventListener('click', (e) => {
+        els.hokm.containerMainRemove();
     });
 }
 function setTestProperty() {

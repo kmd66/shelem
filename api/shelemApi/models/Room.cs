@@ -150,18 +150,21 @@ public class Room
         await Property.ReceiveHakem();
         Main();
     }
+
     private async Task CompletBurning(int reading)
     {
+        await Task.Delay(50);
     }
+
     private async Task CompletDetermination(int reading)
     {
+        await Task.Delay(50);
     }
 
     private async Task CompletGame(int reading)
     {
+        await Task.Delay(50);
     }
-
-
 
     private void SubscribeToEvents()
     {

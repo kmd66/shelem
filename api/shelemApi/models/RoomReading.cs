@@ -8,8 +8,8 @@ namespace shelemApi.Models;
 public class RoomReading
 {
     public event Action<int> CompletSetReading;
-    public CancellationTokenSource ReadingToken;
-    public bool IsReading => ReadingToken != null ? ReadingToken.Token.IsCancellationRequested : false;
+    public CancellationTokenSource token;
+    public bool IsToken => token != null ? token.Token.IsCancellationRequested : false;
 
     private readonly RoomProperty _property;
 
@@ -99,12 +99,12 @@ public class RoomReading
 
     public async Task Main()
     {
-        ReadingToken = new CancellationTokenSource();
+        token = new CancellationTokenSource();
         try
         {
             await Task.Delay(TimeSpan.FromSeconds(3));
             await _property.InitReading();
-            await Task.Delay(TimeSpan.FromSeconds(_property.ReadingTime), ReadingToken.Token);
+            await Task.Delay(TimeSpan.FromSeconds(_property.ReadingTime), token.Token);
             CompletSetReading?.Invoke(0);
         }
         catch (Exception)
@@ -119,7 +119,7 @@ public class RoomReading
         if (reading > 365) return;
         var user = _property.Users.FirstOrDefault(x => x.Key == key);
         if (user == null || user.Id != _property.Tourner) return;
-        ReadingToken?.Cancel();
+        token?.Cancel();
         if (reading < 100 || reading > 360) {
             CompletSetReading?.Invoke(reading);
             return;
@@ -132,11 +132,11 @@ public class RoomReading
     {
         try
         {
-            ReadingToken?.Cancel();
+            token?.Cancel();
         }
         finally
         {
-            ReadingToken?.Dispose();
+            token?.Dispose();
         }
     }
 }

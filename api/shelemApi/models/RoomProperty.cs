@@ -36,6 +36,7 @@ public class RoomProperty0
     public int GameTime = 30 * 60;
     public int ActionTime = 14;
     public int ReadingTime = 30;
+    public int BurningTime = 45;
 
     public int MinReading = 0;
     public long HakemUserId = 0;

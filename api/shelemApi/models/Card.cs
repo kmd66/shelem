@@ -24,6 +24,17 @@ public class Card
         };
         return $"{rankStr}{suits[Suit]}";
     }
+    public override bool Equals(object obj)
+    {
+        if (obj == null || !(obj is Card)) return false;
+        if(Suit == (obj as Card).Suit && Rank == (obj as Card).Rank) return true;
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
 }
 public class CardGroup
 {

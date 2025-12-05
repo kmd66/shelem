@@ -13,6 +13,7 @@ public class RoomGame
 
     public async Task Start()
     {
+        await Task.Delay(50);
     }
     public void dispose()
     {

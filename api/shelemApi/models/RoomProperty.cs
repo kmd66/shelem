@@ -102,7 +102,7 @@ public class RoomProperty: RoomProperty0
 
     public async Task ReceiveCansel()
     {
-        await OnNotifyUsersAsync(Users.Select(x => x.ConnectionId), "ReceiveCansel", true);
+        await NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "ReceiveCansel", true);
         var url = $"{AppStrings.ApiUrl}/resultGame/cancelRoom";
         var cancelModelRequest = new CancelModelRequest(AppStrings.ApiKey, Id);
         var result = await new Helper.AppRequest().Post(cancelModelRequest, url);
@@ -116,7 +116,7 @@ public class RoomProperty: RoomProperty0
         {
         }.ToJson();
 
-        await OnNotifyUsersAsync(Users.Select(x => x.ConnectionId), "ReceivePhysicsStandard", data);
+        await NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "ReceivePhysicsStandard", data);
     }
 
     public async Task InitReading()
@@ -124,27 +124,42 @@ public class RoomProperty: RoomProperty0
         await Task.Delay(50);
         var data = new
         {
-            IsHakemFirstUser,
+            MinReading,
+            Tourner,
             ReadingTime
         };
 
-        await OnNotifyUsersAsync(Users.Select(x => x.ConnectionId), "InitReading", data);
+        await NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "InitReading", data);
+    }
+    public async Task ReceiveHakem()
+    {
+        await Task.Delay(50);
+        var data = new
+        {
+            MinReading,
+            IsHakemFirstUser
+        };
+        await NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "ReceiveHakem", data);
     }
     public async Task ReceiveCards()
     {
         await Task.Delay(50);
         var data1 = new
         {
-            Cards1,
-            CardGroup1
+            rivaCards = Cards2.Count,
+            rivaCardGroup = CardGroup2,
+            cards = Cards1,
+            cardGroup = CardGroup1
         }.ToJson();
         var data2 = new
         {
-            Cards2,
-            CardGroup2
+            rivaCards = Cards1.Count,
+            rivaCardGroup = CardGroup1,
+            cards = Cards2,
+            cardGroup = CardGroup2
         }.ToJson();
 
-        _ = OnUserAsync(Users.First(x=>x.FirstUser).ConnectionId, "ReceiveCards", data1);
-        _ = OnUserAsync(Users.First(x=>x.FirstUser).ConnectionId, "ReceiveCards", data2);
+        _ = NotifyUserAsync?.Invoke(Users.First(x=> x.FirstUser).ConnectionId, "ReceiveCards", data1);
+        _ = NotifyUserAsync?.Invoke(Users.First(x=> !x.FirstUser).ConnectionId, "ReceiveCards", data2);
     }
 }

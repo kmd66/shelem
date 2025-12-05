@@ -1,5 +1,6 @@
 ﻿using shelemApi.Helper;
 using System;
+using System.Collections.Generic;
 
 namespace shelemApi.Models;
 
@@ -16,6 +17,7 @@ public class Room
         Game = new(Property);
         Burning = new(Property);
         Reading = new(Property);
+        SubscribeToEvents();
     }
 
     public async Task Start()
@@ -67,7 +69,6 @@ public class Room
         }
     }
 
-
     public void FinishGame()
     {
         if (Property.IsStart && Property.IsFinish) return;
@@ -108,8 +109,78 @@ public class Room
         //OnReload(reloadModel, goals);
     }
 
+    private void Main()
+    {
+        switch (Property.State)
+        {
+            case GameState.Reading: _ = Reading.Start(); break;
+            case GameState.Burning: _ = Burning.StartBurning(); break;
+            case GameState.Determination: _ = Burning.StartDetermination(); break;
+            case GameState.Game: _ = Game.Start(); break;
+        }
+    }
+
+    private async Task CompletSetReading(int reading)
+    {
+        if (reading > 360)
+        {
+            Property.MinReading = 365;
+            Property.HakemUserId = Property.Users.First(x => x.Id == Property.Tourner).Id;
+        }
+        else if (reading < 100)
+        {
+            Property.HakemUserId = Property.Users.First(x => x.Id != Property.Tourner).Id;
+        }
+        if (Property.MinReading < 100) Property.MinReading = 100;
+
+        var user = Property.Users.First(x => x.Id == Property.HakemUserId);
+        if (user.FirstUser)
+        {
+            Property.Cards1.AddRange([.. Property.CardsGround0]);
+        }
+        else
+        {
+            Property.Cards2.AddRange([.. Property.CardsGround0]);
+        }
+        Property.CardsGround0 = [];
+
+        Property.State = GameState.Burning;
+
+        await Property.ReceiveCards();
+        await Property.ReceiveHakem();
+        Main();
+    }
+    private async Task CompletBurning(int reading)
+    {
+    }
+    private async Task CompletDetermination(int reading)
+    {
+    }
+
+    private async Task CompletGame(int reading)
+    {
+    }
+
+
+
+    private void SubscribeToEvents()
+    {
+        Reading.CompletSetReading += async (reading) => await CompletSetReading(reading);
+        Burning.CompletBurning += async (reading) => await CompletBurning(reading);
+        Burning.CompletDetermination += async (reading) => await CompletDetermination(reading);
+        Game.CompletGame += async (reading) => await CompletGame(reading);
+    }
+    private void UnsubscribeFromEvents()
+    {
+        Reading.CompletSetReading -= async (reading) => await CompletSetReading(reading);
+        Burning.CompletBurning -= async (reading) => await CompletBurning(reading);
+        Burning.CompletDetermination -= async (reading) => await CompletDetermination(reading);
+        Game.CompletGame -= async (reading) => await CompletGame(reading);
+    }
+
     private void dispose()
     {
+        UnsubscribeFromEvents();
         Property.dispose();
         Reading.dispose();
         Burning.dispose();

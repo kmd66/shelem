@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using System;
 using System.Collections.Generic;
 
 namespace shelemApi.Models;
 
 public class RoomReading
 {
+    public event Action<int> CompletSetReading;
     public CancellationTokenSource ReadingToken;
     public bool IsReading => ReadingToken != null ? ReadingToken.Token.IsCancellationRequested : false;
 
@@ -14,6 +17,7 @@ public class RoomReading
     {
         _property = roomProperty;
     }
+
     public async Task Start()
     {
         _property.MinReading = 0;
@@ -35,7 +39,6 @@ public class RoomReading
         await _property.ShufflingCardsInit();
         await Task.Delay(TimeSpan.FromSeconds(5));
         await _property.ReceiveCards();
-        await Task.Delay(TimeSpan.FromSeconds(5));
         _ = Main();
     }
 
@@ -99,13 +102,30 @@ public class RoomReading
         ReadingToken = new CancellationTokenSource();
         try
         {
+            await Task.Delay(TimeSpan.FromSeconds(3));
             await _property.InitReading();
             await Task.Delay(TimeSpan.FromSeconds(_property.ReadingTime), ReadingToken.Token);
+            CompletSetReading?.Invoke(0);
         }
         catch (Exception)
         {
 
         }
+    }
+
+    public void SetReading(Guid key, int reading)
+    {
+        if (reading !=0 && reading <= _property.MinReading) return;
+        if (reading > 365) return;
+        var user = _property.Users.FirstOrDefault(x => x.Key == key);
+        if (user == null || user.Id != _property.Tourner) return;
+        ReadingToken?.Cancel();
+        if (reading < 100 || reading > 360) {
+            CompletSetReading?.Invoke(reading);
+            return;
+        }
+        _property.MinReading = reading;
+        _ = Main();
     }
 
     public void dispose()

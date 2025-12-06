@@ -53,6 +53,7 @@ public class RoomProperty0
 
     public int MinReading = 0;
     public long HakemUserId = 0;
+    public byte HokmSuit = 0;
     public bool IsHakemFirstUser => HakemUserId > 0 ? Users.First(x => x.Id == HakemUserId).FirstUser : true;
 
     public List<Card> Cards1 = [];
@@ -163,7 +164,7 @@ public class RoomProperty: RoomProperty0
         };
         await NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "InitBurning", data);
     }
-    public async Task InitDetermination()
+    public async Task InitGameAction()
     {
         await Task.Delay(50);
         var data = new
@@ -171,7 +172,7 @@ public class RoomProperty: RoomProperty0
             ActionTime,
             Tourner,
         };
-        await NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "InitDetermination", data);
+        await NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "InitGameAction", data);
     }
 
 

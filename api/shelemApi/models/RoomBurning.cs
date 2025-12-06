@@ -38,7 +38,7 @@ public class RoomBurning
 
         }
     }
-    private void SetBurning(Guid key, List<byte> list)
+    public void SetBurning(Guid key, List<byte> list)
     {
         var user = _p.Users.FirstOrDefault(x => x.Key == key);
         if (user == null || user.Id != _p.Tourner) return;
@@ -95,7 +95,7 @@ public class RoomBurning
         try
         {
             await _p.ReceiveCards();
-            await _p.InitDetermination();
+            await _p.InitGameAction();
             await Task.Delay(TimeSpan.FromSeconds(_p.ActionTime), token.Token);
             _p.SetOflineCount();
             if (_p.CheckOflineCount) CompletDetermination?.Invoke();
@@ -106,29 +106,53 @@ public class RoomBurning
             _p.actionTimeRatio = 1;
         }
     }
-    private void SetDetermination(Guid key, byte id)
+    public void SetDetermination(Guid key, byte id)
     {
-        var user = _p.Users.FirstOrDefault(x => x.Key == key);
-        if (user == null || user.Id != _p.Tourner) return;
-
-        var cardsToCheck = user.FirstUser ? _p.Cards1 : _p.Cards2;
-        if (cardsToCheck == null || cardsToCheck.Count == 0)
-            return;
-
-        var card = cardsToCheck.FirstOrDefault(x => x.Id == id);
+        var card = CheckDetermination(key, id);
         if (card == null)
             return;
 
         token?.Cancel();
 
-        cardsToCheck.Remove(card);
         _p.CardsMain.Add(card);
 
         _p.Tourner = _p.Users.First(x => x.Id != _p.Tourner).Id;
+
         if (_p.CardsMain.Count > 1)
+        {
             CompletDetermination?.Invoke();
-        else
-            _ = MainDetermination();
+            return;
+        }
+
+        _p.HokmSuit = card.Suit;
+        _ = MainDetermination();
+    }
+    private Card CheckDetermination(Guid key, byte id)
+    {
+        var user = _p.Users.FirstOrDefault(x => x.Key == key);
+        if (user == null || user.Id != _p.Tourner) return null;
+
+        var cardsToCheck = user.FirstUser ? _p.Cards1 : _p.Cards2;
+        if (cardsToCheck == null || cardsToCheck.Count == 0)
+            return null;
+
+        var card = cardsToCheck.FirstOrDefault(x => x.Id == id);
+        if (card == null)
+            return null;
+
+        if (_p.CardsMain.Count == 0 || card.Suit == _p.HokmSuit)
+        {
+            cardsToCheck.Remove(card);
+            return card;
+        }
+
+        if (cardsToCheck.Any(x=>x.Suit == _p.HokmSuit) && card.Suit != _p.HokmSuit)
+        {
+            return null;
+        }
+
+        cardsToCheck.Remove(card);
+        return card;
     }
 
     public void dispose()

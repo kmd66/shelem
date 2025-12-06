@@ -16,10 +16,10 @@ public class RoomService(IHubContext<RoomHub> hubContext)
 
     public void AddRoom(Room room)
     {
-        if (_rooms.TryAdd(room.Property.Id, room))
+        if (_rooms.TryAdd(room._p.Id, room))
         {
             SubscribeToRoomEvents(room);
-            room.Property.CreatedAt = DateTime.Now;
+            room._p.CreatedAt = DateTime.Now;
             _ = room.Start();
         }
     }
@@ -165,18 +165,18 @@ public class RoomService(IHubContext<RoomHub> hubContext)
     
     private void SubscribeToRoomEvents(Room room)
     {
-        room.Property.NotifyUserAsync += async (key, eventName, data) => await NotifyUserAsync(key, eventName, data);
-        room.Property.NotifyUsersAsync += async (keys, eventName, data) => await NotifyUsersAsync(keys, eventName, data);
-        room.Property.Remove += (roomId) => RemoveRoom(roomId);
-        room.Property.Reload += async (model, goals) => await ReloadRoom(model, goals);
-        room.Property.CreatedAt = DateTime.Now;
+        room._p.NotifyUserAsync += async (key, eventName, data) => await NotifyUserAsync(key, eventName, data);
+        room._p.NotifyUsersAsync += async (keys, eventName, data) => await NotifyUsersAsync(keys, eventName, data);
+        room._p.Remove += (roomId) => RemoveRoom(roomId);
+        room._p.Reload += async (model, goals) => await ReloadRoom(model, goals);
+        room._p.CreatedAt = DateTime.Now;
     }
     private void UnsubscribeFromRoomEvents(Room room)
     {
-        room.Property.NotifyUserAsync -= async (key, eventName, data) => await NotifyUserAsync(key, eventName, data);
-        room.Property.NotifyUsersAsync -= async (keys, eventName, data) => await NotifyUsersAsync(keys, eventName, data);
-        room.Property.Remove -= (roomId) => RemoveRoom(roomId);
-        room.Property.Reload -= async (model, goals) => await ReloadRoom(model, goals);
+        room._p.NotifyUserAsync -= async (key, eventName, data) => await NotifyUserAsync(key, eventName, data);
+        room._p.NotifyUsersAsync -= async (keys, eventName, data) => await NotifyUsersAsync(keys, eventName, data);
+        room._p.Remove -= (roomId) => RemoveRoom(roomId);
+        room._p.Reload -= async (model, goals) => await ReloadRoom(model, goals);
     }
 
 
@@ -215,7 +215,7 @@ public class RoomService(IHubContext<RoomHub> hubContext)
             return null;
         if (_rooms.TryGetValue(roomId, out Room room))
         {
-            return room.Property.Users.FirstOrDefault(x =>
+            return room._p.Users.FirstOrDefault(x =>
                 (key == Guid.Empty || x.Key == key) &&
                 (userId == 0 || x.Id == userId)
             );

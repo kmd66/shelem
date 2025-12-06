@@ -1,19 +1,14 @@
 ﻿namespace shelemApi.Models;
 
-public class Card
+public class Card(byte id, byte suit, byte rank)
 {
-    public int Suit { get; set; } // 0: ♠, 1: ♥, 2: ♣, 3: ♦
-    public int Rank { get; set; } // 1-13
-
-    public Card(int suit, int rank)
-    {
-        Suit = suit;
-        Rank = rank;
-    }
+    public byte Id { get; set; } = id;
+    public byte Suit { get; set; } = suit;
+    public byte Rank { get; set; } = rank;
 
     public override string ToString()
     {
-        string[] suits = { "♠", "♥", "♣", "♦" };
+        string[] suits = ["♠", "♥", "♣", "♦"];
         string rankStr = Rank switch
         {
             1 => "A",
@@ -26,7 +21,7 @@ public class Card
     }
     public override bool Equals(object obj)
     {
-        if (obj == null || !(obj is Card)) return false;
+        if (obj == null || obj is not Card) return false;
         if(Suit == (obj as Card).Suit && Rank == (obj as Card).Rank) return true;
         return false;
     }
@@ -36,6 +31,7 @@ public class Card
         throw new NotImplementedException();
     }
 }
+
 public class CardGroup
 {
     public int Count { get; set; }
@@ -47,5 +43,21 @@ public class CardGroup
         Count = count;
         Suit = suit;
         Rank = rank;
+    }
+
+    public CardGroup(List<Card> cards)
+    {
+        Count = cards.Count;
+        if (cards.Count > 0)
+        {
+            var card = cards.Last();
+            Suit = card.Suit;
+            Rank = card.Rank;
+        }
+        else
+        {
+            Suit = -1;
+            Rank = -1;
+        }
     }
 }

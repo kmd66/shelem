@@ -6,32 +6,32 @@ namespace shelemApi.Models;
 
 public class Room
 {
-    public RoomProperty Property ;
-    public RoomReading Reading;
-    public RoomBurning Burning;
-    public RoomGame Game;
+    public RoomProperty _p ;
+    public RoomReading _reading;
+    public RoomBurning _burning;
+    public RoomGame _game;
 
     public Room(Guid roomId, List<RoomUser> users)
     {
-        Property = new(roomId, users);
-        Game = new(Property);
-        Burning = new(Property);
-        Reading = new(Property);
+        _p = new(roomId, users);
+        _game = new(_p);
+        _burning = new(_p);
+        _reading = new(_p);
         SubscribeToEvents();
     }
 
     public async Task Start()
     {
-        if (Property.IsStart)
+        if (_p.IsStart)
             return;
 
-        Property.StartToken = new CancellationTokenSource();
-        Property.FinishToken = new CancellationTokenSource();
-        Property.InitStrat = [];
+        _p.StartToken = new CancellationTokenSource();
+        _p.FinishToken = new CancellationTokenSource();
+        _p.InitStrat = [];
 
         try
         {
-            await Task.Delay(TimeSpan.FromSeconds(Property.StartWait), Property.StartToken.Token);
+            await Task.Delay(TimeSpan.FromSeconds(_p.StartWait), _p.StartToken.Token);
         }
         finally
         {
@@ -42,49 +42,133 @@ public class Room
             catch (Exception) { }
         }
     }
+
     private async Task extensionStart()
     {
         try
         {
-            bool _start = Property.IsStart;
+            bool _start = _p.IsStart;
         }
         catch (Exception)
         {
-            _ = Property.ReceiveCansel();
+            _ = _p.ReceiveCansel();
             return;
         }
 
-        if (!Property.IsStart)
+        if (!_p.IsStart)
         {
-            _ = Property.ReceiveCansel();
+            _ = _p.ReceiveCansel();
         }
         else
         {
-            Property.Tourner = Property.Users.Find(x => x.FirstUser == true).Id;
+            _p.Tourner = _p.Users.Find(x => x.FirstUser == true).Id;
             await Task.Delay(500);
-            Property.StartGameAt = DateTime.Now;
-            await Property.ReceiveInit();
-            await Property.ReceivePhysicsStandard();
-            _ = Reading.Start();
+            _p.StartGameAt = DateTime.Now;
+            await _p.InitEvent("ReceiveInit");
+            await _p.ReceivePhysicsStandard();
+            _ = _reading.Start();
         }
     }
 
+    private void Main()
+    {
+        if (CheckEndGame())
+        {
+            return;
+        }
+
+        switch (_p.State)
+        {
+            case GameState.Reading: _ = _reading.Start(); break;
+            case GameState.Burning: _burning.StartBurning(); break;
+            case GameState.Determination: _burning.StartDetermination(); break;
+            case GameState.Game: _ = _game.Start(); break;
+        }
+    }
+
+
+    #region Complet event
+    private async Task CompletSetReading(int reading)
+    {
+        if (reading > 160)
+        {
+            _p.MinReading = 165;
+            _p.HakemUserId = _p.Users.First(x => x.Id == _p.Tourner).Id;
+        }
+        else if (reading < 100)
+        {
+            _p.HakemUserId = _p.Users.First(x => x.Id != _p.Tourner).Id;
+        }
+        _p.Tourner = _p.HakemUserId;
+
+        if (_p.MinReading < 100) _p.MinReading = 100;
+
+        var user = _p.Users.First(x => x.Id == _p.HakemUserId);
+        if (user.FirstUser)
+        {
+            _p.Cards1.AddRange([.. _p.CardsGround0]);
+        }
+        else
+        {
+            _p.Cards2.AddRange([.. _p.CardsGround0]);
+        }
+        _p.CardsGround0 = [];
+
+        _p.State = GameState.Burning;
+
+        await _p.ReceiveCards();
+        await _p.ReceiveHakem();
+        Main();
+    }
+
+    private void CompletBurning()
+    {
+        _p.State = GameState.Determination;
+        Main();
+    }
+
+    private void CompletDetermination()
+    {
+        _p.State = GameState.Determination;
+        _game.SetCardGroup();
+        Main();
+    }
+
+    private async Task CompletGame(int reading)
+    {
+        await Task.Delay(50);
+    }
+
+    #endregion
+
+    #region win
+
+    private bool CheckEndGame()
+    {
+        if(_p.CheckOflineCount)
+            return true;
+        if (_p.CheckTotalScore)
+            return true;
+        if (_p.StartGameAt.AddSeconds(_p.GameTime) < DateTime.Now)
+            return true;
+        return false;
+    }
     public void FinishGame()
     {
-        if (Property.IsStart && Property.IsFinish) return;
+        if (_p.IsStart && _p.IsFinish) return;
 
         bool isReload = false;
-        bool start = Property.IsStart;
-        if (Property.IsStart && Property.FirstOflineCount < 3 && Property.SecondOflineCount < 3)
+        bool start = _p.IsStart;
+        if (_p.IsStart && _p.FirstOflineCount < 3 && _p.SecondOflineCount < 3)
             isReload = true;
         dispose();
 
-        var id1 =  Property.Users.First(x => x.FirstUser).Id;
-        var id2 = Property.Users.First(x => !x.FirstUser).Id;
+        var id1 = _p.Users.First(x => x.FirstUser).Id;
+        var id2 = _p.Users.First(x => !x.FirstUser).Id;
         long winner = 0;
-        if (Property.FirstOflineCount > 2 || Property.SecondOflineCount > 2)
+        if (_p.FirstOflineCount > 2 || _p.SecondOflineCount > 2)
         {
-            winner = Property.FirstOflineCount > 2 ? id2 : id1;
+            winner = _p.FirstOflineCount > 2 ? id2 : id1;
         }
         //else if (firstUserGoal != secondUserGoal)
         //{
@@ -98,97 +182,44 @@ public class Room
 
         var reloadModel = new FinishModelRequest(
             key: AppStrings.ApiKey,
-            roomId: Property.Id,
+            roomId: _p.Id,
             start: start,
             isReload: isReload,
             winner: winner,
-            user1: new FinishUser(Property.Users[0].ConnectionId, Property.Users[0].Key, Property.Users[0].Id),
-            user2: new FinishUser(Property.Users[1].ConnectionId, Property.Users[1].Key, Property.Users[1].Id),
+            user1: new FinishUser(_p.Users[0].ConnectionId, _p.Users[0].Key, _p.Users[0].Id),
+            user2: new FinishUser(_p.Users[1].ConnectionId, _p.Users[1].Key, _p.Users[1].Id),
             BaseUrl: Helper.AppStrings.MainUrl
             );
         //OnReload(reloadModel, goals);
     }
 
-    private void Main()
-    {
-        switch (Property.State)
-        {
-            case GameState.Reading: _ = Reading.Start(); break;
-            case GameState.Burning: _ = Burning.StartBurning(); break;
-            case GameState.Determination: _ = Burning.StartDetermination(); break;
-            case GameState.Game: _ = Game.Start(); break;
-        }
-    }
+    #endregion
 
-    private async Task CompletSetReading(int reading)
-    {
-        if (reading > 360)
-        {
-            Property.MinReading = 365;
-            Property.HakemUserId = Property.Users.First(x => x.Id == Property.Tourner).Id;
-        }
-        else if (reading < 100)
-        {
-            Property.HakemUserId = Property.Users.First(x => x.Id != Property.Tourner).Id;
-        }
-        if (Property.MinReading < 100) Property.MinReading = 100;
-
-        var user = Property.Users.First(x => x.Id == Property.HakemUserId);
-        if (user.FirstUser)
-        {
-            Property.Cards1.AddRange([.. Property.CardsGround0]);
-        }
-        else
-        {
-            Property.Cards2.AddRange([.. Property.CardsGround0]);
-        }
-        Property.CardsGround0 = [];
-
-        Property.State = GameState.Burning;
-
-        await Property.ReceiveCards();
-        await Property.ReceiveHakem();
-        Main();
-    }
-
-    private async Task CompletBurning(int reading)
-    {
-        await Task.Delay(50);
-    }
-
-    private async Task CompletDetermination(int reading)
-    {
-        await Task.Delay(50);
-    }
-
-    private async Task CompletGame(int reading)
-    {
-        await Task.Delay(50);
-    }
-
+    #region dispose
     private void SubscribeToEvents()
     {
-        Reading.CompletSetReading += async (reading) => await CompletSetReading(reading);
-        Burning.CompletBurning += async (reading) => await CompletBurning(reading);
-        Burning.CompletDetermination += async (reading) => await CompletDetermination(reading);
-        Game.CompletGame += async (reading) => await CompletGame(reading);
+        _reading.CompletSetReading += async (reading) => await CompletSetReading(reading);
+        _burning.CompletBurning += () => CompletBurning();
+        _burning.CompletDetermination += () => CompletDetermination();
+        _game.CompletGame += async (reading) => await CompletGame(reading);
     }
     private void UnsubscribeFromEvents()
     {
-        Reading.CompletSetReading -= async (reading) => await CompletSetReading(reading);
-        Burning.CompletBurning -= async (reading) => await CompletBurning(reading);
-        Burning.CompletDetermination -= async (reading) => await CompletDetermination(reading);
-        Game.CompletGame -= async (reading) => await CompletGame(reading);
+        _reading.CompletSetReading -= async (reading) => await CompletSetReading(reading);
+        _burning.CompletBurning -= () => CompletBurning();
+        _burning.CompletDetermination -= () => CompletDetermination();
+        _game.CompletGame -= async (reading) => await CompletGame(reading);
     }
 
     private void dispose()
     {
         UnsubscribeFromEvents();
-        Property.dispose();
-        Reading.dispose();
-        Burning.dispose();
-        Game.dispose();
+        _p.dispose();
+        _reading.dispose();
+        _burning.dispose();
+        _game.dispose();
     }
 
+    #endregion
 }
 

@@ -5,46 +5,44 @@ using System.Collections.Generic;
 
 namespace shelemApi.Models;
 
-public class RoomReading
+public class RoomReading(RoomProperty roomProperty)
 {
     public event Action<int> CompletSetReading;
     public CancellationTokenSource token;
     public bool IsToken => token != null ? token.Token.IsCancellationRequested : false;
 
-    private readonly RoomProperty _property;
-
-    public RoomReading(RoomProperty roomProperty)
-    {
-        _property = roomProperty;
-    }
+    private readonly RoomProperty _p = roomProperty;
 
     public async Task Start()
     {
-        _property.MinReading = 0;
-        _property.HakemUserId = 0;
+        _p.MinReading = 0;
+        _p.HakemUserId = 0;
 
-        List<int> suits = [0, 1, 2, 3]; // ♠, ♥, ♣, ♦
-        List<int> ranks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-        List<Card> allCards = new List<Card>();
-        foreach (int suit in suits)
+        List<byte> suits = [0, 1, 2, 3]; // ♠, ♥, ♣, ♦
+        List<byte> ranks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+        List<Card> allCards = [];
+        byte id = 0;
+        foreach (byte suit in suits)
         {
-            foreach (int rank in ranks)
+            id++;
+            foreach (byte rank in ranks)
             {
-                allCards.Add(new Card(suit, rank));
+                id++;
+                allCards.Add(new Card(id, suit, rank));
             }
         }
         ShuffleCards(allCards);
         DistributeCards(allCards);
         await Task.Delay(50);
-        await _property.ShufflingCardsInit();
+        await _p.InitEvent("ShufflingCardsInit");
         await Task.Delay(TimeSpan.FromSeconds(5));
-        await _property.ReceiveCards();
+        await _p.ReceiveCards();
         _ = Main();
     }
 
     private void ShuffleCards(List<Card> cards)
     {
-        Random rng = new Random();
+        Random rng = new();
 
         for (int i = cards.Count - 1; i > 0; i--)
         {
@@ -59,41 +57,44 @@ public class RoomReading
 
     private void DistributeCards(List<Card> allCards)
     {
+        _p.CardsWinning1 = [];
+        _p.CardsWinning2 = [];
+        _p.CardsMain = [];
         int index = 0;
 
-        _property.Cards1 = allCards.GetRange(index, 12);
+        _p.Cards1 = allCards.GetRange(index, 12);
         index += 12;
 
-        _property.Cards2 = allCards.GetRange(index, 12);
+        _p.Cards2 = allCards.GetRange(index, 12);
         index += 12;
 
-        _property.CardsGround0 = allCards.GetRange(index, 4);
+        _p.CardsGround0 = allCards.GetRange(index, 4);
         index += 4;
 
-        _property.CardsGround1 = new List<List<Card>>();
+        _p.CardsGround1 = [];
         for (int i = 0; i < 3; i++)
         {
-            _property.CardsGround1.Add(allCards.GetRange(index, 4));
+            _p.CardsGround1.Add(allCards.GetRange(index, 4));
             index += 4;
         }
         
-        _property.CardsGround2 = new List<List<Card>>();
+        _p.CardsGround2 = [];
         for (int i = 0; i < 3; i++)
         {
-            _property.CardsGround2.Add(allCards.GetRange(index, 4));
+            _p.CardsGround2.Add(allCards.GetRange(index, 4));
             index += 4;
         }
-        _property.CardGroup1 =
+        _p.CardGroup1 =
         [
-            new CardGroup(_property.CardsGround1[0].Count),
-            new CardGroup(_property.CardsGround1[1].Count),
-            new CardGroup(_property.CardsGround1[2].Count),
+            new CardGroup(_p.CardsGround1[0].Count),
+            new CardGroup(_p.CardsGround1[1].Count),
+            new CardGroup(_p.CardsGround1[2].Count),
         ];
-        _property.CardGroup2 =
+        _p.CardGroup2 =
         [
-            new CardGroup(_property.CardsGround2[0].Count),
-            new CardGroup(_property.CardsGround2[1].Count),
-            new CardGroup(_property.CardsGround2[2].Count),
+            new CardGroup(_p.CardsGround2[0].Count),
+            new CardGroup(_p.CardsGround2[1].Count),
+            new CardGroup(_p.CardsGround2[2].Count),
         ];
     }
 
@@ -103,8 +104,8 @@ public class RoomReading
         try
         {
             await Task.Delay(TimeSpan.FromSeconds(3));
-            await _property.InitReading();
-            await Task.Delay(TimeSpan.FromSeconds(_property.ReadingTime), token.Token);
+            await _p.InitReading();
+            await Task.Delay(TimeSpan.FromSeconds(_p.ReadingTime), token.Token);
             CompletSetReading?.Invoke(0);
         }
         catch (Exception)
@@ -115,16 +116,17 @@ public class RoomReading
 
     public void SetReading(Guid key, int reading)
     {
-        if (reading !=0 && reading <= _property.MinReading) return;
-        if (reading > 365) return;
-        var user = _property.Users.FirstOrDefault(x => x.Key == key);
-        if (user == null || user.Id != _property.Tourner) return;
+        if (reading !=0 && reading <= _p.MinReading) return;
+        if (reading > 165) return;
+        var user = _p.Users.FirstOrDefault(x => x.Key == key);
+        if (user == null || user.Id != _p.Tourner) return;
         token?.Cancel();
-        if (reading < 100 || reading > 360) {
+        if (reading < 100 || reading > 160) {
             CompletSetReading?.Invoke(reading);
             return;
         }
-        _property.MinReading = reading;
+        _p.MinReading = reading;
+        _p.Tourner = _p.Users.First(x => x.Id != _p.Tourner).Id;
         _ = Main();
     }
 

@@ -4,7 +4,8 @@ public class RoomGame
 {
 
     private readonly RoomProperty _p;
-    public event Action<int> CompletGame;
+    public CancellationTokenSource token;
+    public event Func<Task> CompletGame;
 
     public RoomGame(RoomProperty roomProperty)
     {
@@ -15,6 +16,24 @@ public class RoomGame
     {
         await Task.Delay(50);
     }
+
+    private async Task MainDetermination()
+    {
+        token = new CancellationTokenSource();
+        try
+        {
+            await _p.InitGameAction();
+            await Task.Delay(TimeSpan.FromSeconds(_p.ActionTime), token.Token);
+            _p.SetOflineCount();
+            if (_p.CheckOflineCount) CompletGame?.Invoke();
+            else _ = MainDetermination();
+        }
+        catch (Exception)
+        {
+            _p.actionTimeRatio = 1;
+        }
+    }
+
     public void SetCardGroup()
     {
         _p.CardGroup1 =
@@ -32,6 +51,14 @@ public class RoomGame
     }
     public void dispose()
     {
+        try
+        {
+            token?.Cancel();
+        }
+        finally
+        {
+            token?.Dispose();
+        }
     }
 }
 

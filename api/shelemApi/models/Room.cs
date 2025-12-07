@@ -74,6 +74,7 @@ public class Room
     {
         if (CheckEndGame())
         {
+            EndGame();
             return;
         }
 
@@ -127,14 +128,20 @@ public class Room
         Main();
     }
 
-    private void CompletDetermination()
+    private async Task CompletDetermination()
     {
+        if (CheckEndGame())
+        {
+            EndGame();
+            return;
+        }
         _p.State = GameState.Determination;
         _game.SetCardGroup();
-        Main();
+        await _p.ReceiveCards();
+        await Task.Delay(TimeSpan.FromSeconds(5));
     }
 
-    private async Task CompletGame(int reading)
+    private async Task CompletGame()
     {
         await Task.Delay(50);
     }
@@ -145,13 +152,17 @@ public class Room
 
     private bool CheckEndGame()
     {
-        if(_p.CheckOflineCount)
+        if (_p.CheckOflineCount)
             return true;
         if (_p.CheckTotalScore)
             return true;
         if (_p.StartGameAt.AddSeconds(_p.GameTime) < DateTime.Now)
             return true;
         return false;
+    }
+
+    private void EndGame()
+    {
     }
 
     public void FinishGame()
@@ -198,20 +209,23 @@ public class Room
 
     #region dispose
 
+
     private void SubscribeToEvents()
     {
-        _reading.CompletSetReading += async (reading) => await CompletSetReading(reading);
-        _burning.CompletBurning += () => CompletBurning();
-        _burning.CompletDetermination += () => CompletDetermination();
-        _game.CompletGame += async (reading) => await CompletGame(reading);
+
+        _reading.CompletSetReading += CompletSetReading;
+        _burning.CompletBurning += CompletBurning;
+        _burning.CompletDetermination += CompletDetermination;
+        _game.CompletGame += CompletGame;
+
     }
     
     private void UnsubscribeFromEvents()
     {
-        _reading.CompletSetReading -= async (reading) => await CompletSetReading(reading);
-        _burning.CompletBurning -= () => CompletBurning();
-        _burning.CompletDetermination -= () => CompletDetermination();
-        _game.CompletGame -= async (reading) => await CompletGame(reading);
+        _reading.CompletSetReading -= CompletSetReading;
+        _burning.CompletBurning -= CompletBurning;
+        _burning.CompletDetermination -= CompletDetermination;
+        _game.CompletGame -= CompletGame;
     }
 
     private void dispose()

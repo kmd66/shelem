@@ -105,7 +105,7 @@ public class RoomProperty: RoomProperty0
     public event Func<string, string, object, Task> NotifyUserAsync;
     public event Func<IEnumerable<string>, string, object, Task> NotifyUsersAsync;
     public event Action<Guid> Remove;
-    public event Action<FinishModelRequest, List<byte>> Reload;
+    public event Func<FinishModelRequest, List<byte>, Task> Reload;
 
     protected Task OnUserAsync(string conectionId, string eventName, object data)
         => NotifyUserAsync?.Invoke(conectionId, eventName, data) ?? Task.CompletedTask;

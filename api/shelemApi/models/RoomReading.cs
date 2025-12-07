@@ -7,7 +7,7 @@ namespace shelemApi.Models;
 
 public class RoomReading(RoomProperty roomProperty)
 {
-    public event Action<int> CompletSetReading;
+    public event Func<int, Task> CompletSetReading;
     public CancellationTokenSource token;
     public bool IsToken => token != null ? token.Token.IsCancellationRequested : false;
 

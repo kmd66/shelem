@@ -8,7 +8,7 @@ public class RoomBurning
     private readonly RoomProperty _p;
 
     public event Action CompletBurning;
-    public event Action CompletDetermination;
+    public event Func<Task> CompletDetermination;
     public CancellationTokenSource token;
     public bool IsToken => token != null ? token.Token.IsCancellationRequested : false;
 

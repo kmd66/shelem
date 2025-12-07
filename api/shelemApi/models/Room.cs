@@ -37,13 +37,13 @@ public class Room
         {
             try
             {
-                _= extensionStart();
+                _= ExtensionStart();
             }
             catch (Exception) { }
         }
     }
 
-    private async Task extensionStart()
+    private async Task ExtensionStart()
     {
         try
         {
@@ -153,6 +153,7 @@ public class Room
             return true;
         return false;
     }
+
     public void FinishGame()
     {
         if (_p.IsStart && _p.IsFinish) return;
@@ -196,6 +197,7 @@ public class Room
     #endregion
 
     #region dispose
+
     private void SubscribeToEvents()
     {
         _reading.CompletSetReading += async (reading) => await CompletSetReading(reading);
@@ -203,6 +205,7 @@ public class Room
         _burning.CompletDetermination += () => CompletDetermination();
         _game.CompletGame += async (reading) => await CompletGame(reading);
     }
+    
     private void UnsubscribeFromEvents()
     {
         _reading.CompletSetReading -= async (reading) => await CompletSetReading(reading);

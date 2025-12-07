@@ -123,8 +123,8 @@ public class RoomBurning
             CompletDetermination?.Invoke();
             return;
         }
-
         _p.HokmSuit = card.Suit;
+        _ = _p.ReceiveHokm();
         _ = MainDetermination();
     }
     private Card CheckDetermination(Guid key, byte id)

@@ -48,7 +48,7 @@ public class CardGroup
     public CardGroup(List<Card> cards)
     {
         Count = cards.Count;
-        if (cards.Count > 0)
+        if (Count > 0)
         {
             var card = cards.Last();
             Suit = card.Suit;

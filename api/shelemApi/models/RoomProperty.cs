@@ -186,6 +186,8 @@ public class RoomProperty: RoomProperty0
         };
         await NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "ReceiveHakem", data);
     }
+    public Task ReceiveHokm()=> NotifyUsersAsync?.Invoke(Users.Select(x => x.ConnectionId), "ReceiveHokm", HokmSuit);
+
     public async Task ReceiveCards()
     {
         await Task.Delay(50);

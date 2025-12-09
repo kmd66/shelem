@@ -83,7 +83,7 @@ public class Room
             case GameState.Reading: _ = _reading.Start(); break;
             case GameState.Burning: _burning.StartBurning(); break;
             case GameState.Determination: _burning.StartDetermination(); break;
-            case GameState.Game: _ = _game.Start(); break;
+            case GameState.Game: _ = _game.Main(); break;
         }
     }
 
@@ -135,10 +135,11 @@ public class Room
             EndGame();
             return;
         }
-        _p.State = GameState.Determination;
+        _p.State = GameState.Game;
         _game.SetCardGroup();
         await _p.ReceiveCards();
         await Task.Delay(TimeSpan.FromSeconds(5));
+        _ = _game.Main(true);
     }
 
     private async Task CompletGame()

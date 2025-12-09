@@ -34,12 +34,14 @@ public class Card(byte id, byte suit, byte rank)
 
 public class CardGroup
 {
+    public byte Id { get; set; }
     public int Count { get; set; }
     public int Suit { get; set; }
     public int Rank { get; set; }
 
-    public CardGroup(int count, int suit = -1, int rank = -1)
+    public CardGroup(int count, byte id = 0, int suit = -1, int rank = -1)
     {
+        Id = id;
         Count = count;
         Suit = suit;
         Rank = rank;
@@ -51,11 +53,13 @@ public class CardGroup
         if (Count > 0)
         {
             var card = cards.Last();
+            Id = card.Id;
             Suit = card.Suit;
             Rank = card.Rank;
         }
         else
         {
+            Id = 0;
             Suit = -1;
             Rank = -1;
         }
